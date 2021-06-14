@@ -21,10 +21,8 @@ func Test() {
 }
 
 // https://github.com/urfave/cli/blob/master/docs/v2/manual.md
+// https://pkg.go.dev/github.com/urfave/cli/v2#Context.FlagNames
 func main() {
-
-
-
 	var imported_key string
 	app := &cli.App{
 		Flags: []cli.Flag {
