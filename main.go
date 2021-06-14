@@ -29,7 +29,7 @@ func main() {
 			&cli.StringFlag{
 				Name: "key",
 				Aliases: []string{ "k" } ,
-				Usage: "Creates New SecretBox" ,
+				Usage: "Opens Existing SecretBox" ,
 				Destination: &imported_key ,
 			} ,
 	  	} ,
