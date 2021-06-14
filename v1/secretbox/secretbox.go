@@ -3,6 +3,7 @@ package secretbox
 import (
 	"fmt"
 	"time"
+	"os"
 	"strings"
 	"encoding/base64"
 	"io/ioutil"
@@ -112,5 +113,19 @@ func ( box *Box ) OpenFile( file_path string ) ( result string ) {
 	decoded_bytes , ok := secretbox.Open( nil , file_bytes[nonce_size:] , &nonce , &key )
 	if ok != true { panic( ok ) }
 	result = string( decoded_bytes )
+	return
+}
+func ( box *Box ) SealFile( file_path string , message string ) ( result string ) {
+	result = "failed"
+	nonce := box.get_enforced_24_byte_nonce()
+	key := box.get_enforced_32_byte_key()
+	sealed := make( []uint8 , nonce_size )
+	copy( sealed , box.Nonce[:] )
+	sealed = secretbox.Seal( sealed , []byte( message ) , &nonce , &key );
+	sealed_b64_string := base64.StdEncoding.EncodeToString( sealed )
+	out_file , _ := os.Create( file_path )
+	defer out_file.Close()
+	out_file.WriteString( sealed_b64_string )
+	result = "success"
 	return
 }
