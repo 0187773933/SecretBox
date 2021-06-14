@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	secretbox "secretbox/v1/secretbox"
+	secretbox "github.com/0187773933/SecretBox/v1/secretbox"
 )
 
 func main() {
