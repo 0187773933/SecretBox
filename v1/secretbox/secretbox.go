@@ -115,7 +115,7 @@ func ( box *Box ) OpenFile( file_path string ) ( result string ) {
 	result = string( decoded_bytes )
 	return
 }
-func ( box *Box ) SealFile( file_path string , message string ) ( result string ) {
+func ( box *Box ) SealPlainTextToFile( file_path string , message string ) ( result string ) {
 	result = "failed"
 	nonce := box.get_enforced_24_byte_nonce()
 	key := box.get_enforced_32_byte_key()
@@ -124,6 +124,25 @@ func ( box *Box ) SealFile( file_path string , message string ) ( result string 
 	sealed = secretbox.Seal( sealed , []byte( message ) , &nonce , &key );
 	sealed_b64_string := base64.StdEncoding.EncodeToString( sealed )
 	out_file , _ := os.Create( file_path )
+	defer out_file.Close()
+	out_file.WriteString( sealed_b64_string )
+	result = "success"
+	return
+}
+func ( box *Box ) SealPlainFileToEncryptedFile( plain_file_path string , encrypted_file_path string ) ( result string ) {
+	result = "failed"
+	nonce := box.get_enforced_24_byte_nonce()
+	key := box.get_enforced_32_byte_key()
+	sealed := make( []uint8 , nonce_size )
+	copy( sealed , box.Nonce[:] )
+	data , _ := ioutil.ReadFile( plain_file_path )
+	lines := strings.Split( string( data ) , "\n" )
+	lines_cleaned := []string{}
+	for i := range lines { if lines[ i ] != "" { lines_cleaned = append( lines_cleaned , lines[ i ] ) } }
+	cleaned_plaintext := strings.Join( lines_cleaned , "\n" )
+	sealed = secretbox.Seal( sealed , []byte( cleaned_plaintext ) , &nonce , &key );
+	sealed_b64_string := base64.StdEncoding.EncodeToString( sealed )
+	out_file , _ := os.Create( encrypted_file_path )
 	defer out_file.Close()
 	out_file.WriteString( sealed_b64_string )
 	result = "success"

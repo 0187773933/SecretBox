@@ -64,11 +64,22 @@ func main() {
 					{
 						Name: "file",
 						Aliases: []string{ "f" } ,
-						Usage: "seals a plain text file" ,
+						Usage: "seals a plain text file to an encrypted file" ,
 						Action: func( c *cli.Context ) error {
 							arg_list := c.Args().Slice()
 							box := secretbox.Load( imported_key )
-							fmt.Println( box.SealFile( arg_list[ 0 ] , arg_list[ 1 ] ) )
+							fmt.Println( box.SealPlainFileToEncryptedFile( arg_list[ 0 ] , arg_list[ 1 ] ) )
+							return nil
+						} ,
+					} ,
+					{
+						Name: "to_file",
+						Aliases: []string{ "f" } ,
+						Usage: "seals a plain text message to a destination file" ,
+						Action: func( c *cli.Context ) error {
+							arg_list := c.Args().Slice()
+							box := secretbox.Load( imported_key )
+							fmt.Println( box.SealPlainTextToFile( arg_list[ 0 ] , arg_list[ 1 ] ) )
 							return nil
 						} ,
 					} ,
